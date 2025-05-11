@@ -1,80 +1,90 @@
+// src/components/auth/Login.js
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import "./Auth.css";
+import { useNavigate } from "react-router-dom";
+import authService from "../../services/authService";
+import "./Login.css";
 
-const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setIsLoading(true);
 
     try {
-      await login(formData);
-      navigate("/dashboard");
+      await authService.login({ email, password });
+      const user = authService.getCurrentUser();
+      console.log("Logged in user:", user);
+
+      switch (user.role?.toLowerCase()) {
+        case "admin":
+          window.location.href = "/admin/dashboard";
+          break;
+        case "user":
+          window.location.href = "/user/dashboard";
+          break;
+        case "staff":
+          window.location.href = "/staff/dashboard";
+          break;
+        default:
+          throw new Error("Unauthorized role");
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to login");
+      let message = "Login failed. Please check your credentials.";
+      if (err.response?.data?.errors) {
+        message = err.response.data.errors.join(", ");
+      } else if (err.message) {
+        message = err.message;
+      }
+      setError(message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-box">
-        <h2>Login</h2>
-        {error && <div className="error-message">{error}</div>}
+    <div className="login-container">
+      <div className="login-content">
+        <h2>Book Management System</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Email Address</label>
             <input
-              type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
               required
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
-              type="password"
               id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               required
             />
           </div>
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+
+          {error && <div className="error-message">{error}</div>}
+
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Sign In"}
           </button>
         </form>
-        <div className="auth-links">
-          <Link to="/forgot-password">Forgot Password?</Link>
-          <Link to="/register">Don't have an account? Register</Link>
-        </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginPage;

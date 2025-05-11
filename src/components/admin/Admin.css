@@ -1,0 +1,537 @@
+/* --- ADMIN DASHBOARD MODERN STYLES --- */
+.admin-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
+}
+
+.admin-container {
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.07);
+  background: #fff;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 1.2rem;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-avatar {
+  font-size: 2.5rem;
+  color: #2563eb;
+  background: #f1f5f9;
+  border-radius: 50%;
+  padding: 0.5rem;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
+}
+
+.admin-header h1 {
+  color: #2563eb;
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.logout-button {
+  width: 130px;
+  padding: 0.75rem 0.9rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 2px rgba(239, 68, 68, 0.07);
+}
+.logout-button:hover {
+  background-color: #b91c1c;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.13);
+}
+
+.admin-welcome {
+  background: linear-gradient(90deg, #e0e7ef 0%, #f8fafc 100%);
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.admin-welcome h2 {
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.admin-welcome p {
+  color: #475569;
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.admin-links {
+  background: #f8fafc;
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
+  margin-bottom: 2.5rem;
+}
+
+.admin-links h3 {
+  color: #2563eb;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.admin-links nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+.admin-links nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem;
+  background-color: #fff;
+  color: #2563eb;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.08rem;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.04);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.admin-links nav ul li a:hover {
+  background-color: #2563eb;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+}
+.admin-link-icon {
+  font-size: 1.2rem;
+}
+
+.admin-stats {
+  background: #f8fafc;
+  padding: 2rem 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.04);
+}
+
+.admin-stats h3 {
+  color: #2563eb;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 1.5rem 1.2rem;
+  border-radius: 12px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.04);
+  transition: box-shadow 0.2s;
+}
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+}
+
+.stat-icon {
+  font-size: 2.1rem;
+  color: #2563eb;
+  background: #f1f5f9;
+  border-radius: 50%;
+  padding: 0.5rem;
+  min-width: 2.1rem;
+  min-height: 2.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-books .stat-icon {
+  background: #e0e7ef;
+  color: #2563eb;
+}
+.stat-users .stat-icon {
+  background: #e0e7ef;
+  color: #10b981;
+}
+.stat-orders .stat-icon {
+  background: #e0e7ef;
+  color: #f59e42;
+}
+.stat-revenue .stat-icon {
+  background: #e0e7ef;
+  color: #f43f5e;
+}
+
+.stat-card h4 {
+  color: #475569;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.stat-card p {
+  color: #1e293b;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .admin-container {
+    padding: 1rem;
+  }
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  .admin-header-left {
+    justify-content: center;
+    width: 100%;
+  }
+  .admin-welcome,
+  .admin-links,
+  .admin-stats {
+    padding: 1.2rem 0.7rem;
+  }
+  .stats-grid,
+  .admin-links nav ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- END ADMIN DASHBOARD MODERN STYLES --- */
+
+.admin-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  color: #333;
+  margin: 0;
+}
+
+.admin-welcome {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.admin-welcome h2 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.admin-welcome p {
+  color: #666;
+  margin: 0;
+}
+
+.admin-links {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.admin-links h3 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.admin-links nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.admin-links nav ul li a {
+  display: block;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.admin-links nav ul li a:hover {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.admin-stats {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-stats h3 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-card h4 {
+  color: #666;
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.stat-card p {
+  color: #333;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Book Management Styles */
+.book-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.form-group.checkbox label {
+  margin: 0;
+  margin-left: 0.5rem;
+}
+
+.form-group.checkbox input {
+  width: auto;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.form-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: #357abd;
+}
+
+.form-actions button[type="button"] {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #e0e0e0;
+}
+
+.books-list {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.books-list h3 {
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+td button {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+td button:first-child {
+  background-color: #4a90e2;
+  color: white;
+}
+
+td button:first-child:hover {
+  background-color: #357abd;
+}
+
+td button:last-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+td button:last-child:hover {
+  background-color: #c82333;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .admin-links nav ul,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .book-form,
+  .books-list {
+    padding: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}

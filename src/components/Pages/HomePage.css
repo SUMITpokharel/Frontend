@@ -1,0 +1,196 @@
+/* General Styles */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Announcement Bar */
+.announcement {
+  background-color: #00aaff;
+  color: white;
+  text-align: center;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+/* Main Content */
+.filters-and-grid {
+  display: flex;
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .filters-and-grid {
+    flex-direction: column;
+  }
+}
+
+/* Filters Sidebar */
+.filters {
+  width: 280px;
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-section strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #555;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Book Grid */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* Custom Class for Top Picks Grid */
+.top-picks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 30px;
+}
+@media (max-width: 900px) {
+  .top-picks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .top-picks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.book-card {
+  border: 1px solid #e0e0e0;
+  width: 250px;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.book-img {
+  width: 100%;
+  height: 220px;
+  background-color: #f0f0f0;
+  margin-bottom: 16px;
+  background-image: url("https://via.placeholder.com/250");
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+}
+
+.book-card div {
+  margin: 8px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.book-card button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.book-card button:hover {
+  background-color: #005bb5;
+}
+
+/* Newsletter Signup */
+.newsletter {
+  background-color: #f8f8f8;
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid #e0e0e0;
+}
+
+.newsletter h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.newsletter p {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.newsletter form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.newsletter input {
+  flex: 1;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #333;
+}
+
+.newsletter button {
+  padding: 12px 20px;
+  background-color: #00aaff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.newsletter button:hover {
+  background-color: #007acc;
+}

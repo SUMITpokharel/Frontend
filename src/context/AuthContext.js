@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+// src/context/AuthContext.js
+import React, { createContext, useContext, useEffect, useState } from "react";
 import authService from "../services/authService";
 
 const AuthContext = createContext();
@@ -6,20 +7,29 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = authService.getCurrentUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    setLoading(false);
+  }, []);
 
   const login = async (credentials) => {
-    const data = await authService.login(credentials);
-    setUser(data);
-    return data;
+    await authService.login(credentials);
+    setUser(authService.getCurrentUser());
   };
 
-  const register = async (userData) => {
-    const data = await authService.register(userData);
-    return data;
+  const register = async (formData) => {
+    await authService.register(formData);
+  };
+
+  const verifyEmail = async (otpData) => {
+    await authService.verifyEmail(otpData);
+    setUser(authService.getCurrentUser());
   };
 
   const logout = () => {
@@ -31,8 +41,9 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     register,
+    verifyEmail,
     logout,
-    getCurrentUser: authService.getCurrentUser,
+    loading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
