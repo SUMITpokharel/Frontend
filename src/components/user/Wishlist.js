@@ -3,59 +3,53 @@ import { useNavigate } from "react-router-dom";
 import { useBookmarks } from "../../context/BookmarkContext";
 import bookService from "../../services/bookService";
 
-const dummyWishlist = [
-  {
-    id: 1,
-    title: "Book Title 1",
-    author: "Author Name 1",
-    coverImage: "https://via.placeholder.com/120x170?text=Book+1",
-    price: 19.99,
-    discountedPrice: 14.99,
-  },
-  {
-    id: 2,
-    title: "Book Title 2",
-    author: "Author Name 2",
-    coverImage: "https://via.placeholder.com/120x170?text=Book+2",
-    price: 24.99,
-    discountedPrice: null,
-  },
-];
-
 const Wishlist = () => {
   const navigate = useNavigate();
-  const { bookmarkedBooks, addBookmark, removeBookmark, isBookmarked } =
-    useBookmarks();
+  const { bookmarkedBooks, removeBookmark, isLoading } = useBookmarks();
   const [detailedBooks, setDetailedBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch details for all bookmarked books
     async function fetchDetails() {
+      setLoading(true);
       const details = await Promise.all(
         bookmarkedBooks.map(async (bm) => {
+          const bookId = bm.bookId;
+
+          // Skip if bookId is invalid
+          if (!bookId) {
+            console.warn("Invalid bookId in bookmark", bm);
+            return { ...bm, book: null };
+          }
+
           try {
-            const book = await bookService.getBookDetail(bm.bookId);
+            const book = await bookService.getBookDetail(bookId);
+            if (!book) {
+              console.warn(`Book not found for ID: ${bookId}`);
+              return { ...bm, book: null };
+            }
             return { ...bm, book };
-          } catch {
+          } catch (err) {
+            console.error(`Error fetching book detail for ID: ${bookId}`, err);
             return { ...bm, book: null };
           }
         })
       );
       setDetailedBooks(details);
+      setLoading(false);
     }
-    if (bookmarkedBooks.length > 0) fetchDetails();
-    else setDetailedBooks([]);
-  }, [bookmarkedBooks]);
 
-  const handleRemoveBookmark = (bookId) => {
-    // Remove logic here
-    alert("Removed from wishlist: " + bookId);
-  };
+    if (!isLoading && bookmarkedBooks.length > 0) {
+      fetchDetails();
+    } else {
+      setDetailedBooks([]);
+      setLoading(false);
+    }
+  }, [bookmarkedBooks, isLoading]);
 
-  const handleAddToCart = (bookId) => {
-    // Add to cart logic here
-    alert("Added to cart: " + bookId);
-  };
+  if (isLoading || loading) {
+    return <div>Loading your wishlist...</div>;
+  }
 
   return (
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: 24 }}>
@@ -68,9 +62,6 @@ const Wishlist = () => {
           <h2 style={{ fontSize: 24, fontWeight: 600, margin: "16px 0" }}>
             Your wishlist is empty
           </h2>
-          <p style={{ color: "#666", marginBottom: 32 }}>
-            Save your favorite books to your wishlist for later.
-          </p>
           <button
             style={{
               background: "#4a90e2",
@@ -107,15 +98,20 @@ const Wishlist = () => {
                 }}
               >
                 <img
-                  src={bm.book.coverImage}
-                  alt={bm.book.title}
+                  src={
+                    bm.book.coverImage ||
+                    "https://via.placeholder.com/120x170?text=No+Image "
+                  }
+                  alt={bm.book.title || "No Title"}
                   style={{
                     width: 120,
                     height: 170,
                     objectFit: "cover",
                     cursor: "pointer",
                   }}
-                  onClick={() => navigate(`/user/book/${bm.book.id}`)}
+                  onClick={() =>
+                    navigate(`/user/book/${bm.book.bookId || bm.book.id}`)
+                  }
                 />
                 <div
                   style={{
@@ -130,9 +126,11 @@ const Wishlist = () => {
                   >
                     <h3
                       style={{ fontWeight: 600, cursor: "pointer" }}
-                      onClick={() => navigate(`/user/book/${bm.book.id}`)}
+                      onClick={() =>
+                        navigate(`/user/book/${bm.book.bookId || bm.book.id}`)
+                      }
                     >
-                      {bm.book.title}
+                      {bm.book.title || bm.book.BookName || "No Title"}
                     </h3>
                     <button
                       onClick={() => removeBookmark(bm.bookId)}
@@ -148,29 +146,12 @@ const Wishlist = () => {
                     </button>
                   </div>
                   <p style={{ color: "#666", marginBottom: 8 }}>
-                    {bm.book.author}
+                    {bm.book.author || bm.book.Author || "Unknown Author"}
                   </p>
                   <div style={{ marginTop: "auto", marginBottom: 12 }}>
-                    {bm.book.discountedPrice ? (
-                      <div>
-                        <span style={{ fontWeight: 500 }}>
-                          ${bm.book.discountedPrice.toFixed(2)}
-                        </span>
-                        <span
-                          style={{
-                            textDecoration: "line-through",
-                            color: "#888",
-                            marginLeft: 8,
-                          }}
-                        >
-                          ${bm.book.price.toFixed(2)}
-                        </span>
-                      </div>
-                    ) : (
-                      <span style={{ fontWeight: 500 }}>
-                        ${bm.book.price.toFixed(2)}
-                      </span>
-                    )}
+                    <span style={{ fontWeight: 500 }}>
+                      ${bm.book.price?.toFixed(2) || "N/A"}
+                    </span>
                   </div>
                   <button
                     style={{
@@ -183,9 +164,11 @@ const Wishlist = () => {
                       fontWeight: 600,
                       cursor: "pointer",
                     }}
-                    onClick={() => handleAddToCart(bm.book.id)}
+                    onClick={() =>
+                      navigate(`/user/book/${bm.book.bookId || bm.book.id}`)
+                    }
                   >
-                    Add to Cart
+                    View Details
                   </button>
                 </div>
               </div>
@@ -207,10 +190,25 @@ const Wishlist = () => {
                     borderRadius: 4,
                     fontWeight: 600,
                     cursor: "pointer",
+                    marginBottom: 12,
                   }}
                   onClick={() => navigate("/user/dashboard")}
                 >
                   Browse Books
+                </button>
+                <button
+                  style={{
+                    background: "#e53935",
+                    color: "#fff",
+                    padding: "8px 24px",
+                    border: "none",
+                    borderRadius: 4,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => removeBookmark(bm.bookId)}
+                >
+                  Remove from Wishlist
                 </button>
               </div>
             )

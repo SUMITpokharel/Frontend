@@ -43,6 +43,32 @@ const bookService = {
     const response = await axios.get(`${API_URL}/${id}/details`);
     return response.data;
   },
+
+  updateBook: async (id, bookData) => {
+    try {
+      const response = await axios.put(`${API_URL}/${id}`, bookData);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Update book error:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  deleteBook: async (id) => {
+    try {
+      const response = await axios.delete(`${API_URL}/${id}`);
+      return response.status === 204; // Returns true if successfully deleted
+    } catch (error) {
+      console.error(
+        "Delete book error:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
 };
 
 export default bookService;

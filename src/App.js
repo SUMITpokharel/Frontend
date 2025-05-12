@@ -25,6 +25,7 @@ import Wishlist from "./components/user/Wishlist";
 import OrderConfirmation from "./components/user/OrderConfirmation";
 import AdminDashboards from "./components/admin/Announcement";
 import PublisherForm from "./components/admin/PublisherForm";
+import DiscountManagement from "./components/admin/DiscountManagement";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -99,6 +100,14 @@ function App() {
               element={
                 <AdminRoute>
                   <PublisherForm />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/discounts"
+              element={
+                <AdminRoute>
+                  <DiscountManagement />
                 </AdminRoute>
               }
             />

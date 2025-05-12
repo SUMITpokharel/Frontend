@@ -17,10 +17,20 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("Title");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedPublisher, setSelectedPublisher] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const {
+    addBookmark,
+    removeBookmark,
+    isBookmarked,
+    error: bookmarkError,
+  } = useBookmarks();
+  const [bookmarkActionError, setBookmarkActionError] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -34,6 +44,23 @@ const UserDashboard = () => {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (bookmarkError) {
+      setBookmarkActionError(bookmarkError);
+      // Clear error after 3 seconds
+      const timer = setTimeout(() => setBookmarkActionError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [bookmarkError]);
+
+  // Extract unique languages and publishers
+  const languages = Array.from(
+    new Set(books.map((b) => b.language).filter(Boolean))
+  );
+  const publishers = Array.from(
+    new Set(books.map((b) => b.publisherName).filter(Boolean))
+  );
 
   // Filtering and sorting on frontend
   let filteredBooks = books;
@@ -54,6 +81,26 @@ const UserDashboard = () => {
           .includes(searchTermLower)
       );
     });
+  }
+  if (selectedLanguage) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.language === selectedLanguage
+    );
+  }
+  if (selectedPublisher) {
+    filteredBooks = filteredBooks.filter(
+      (book) => book.publisherName === selectedPublisher
+    );
+  }
+  if (minPrice) {
+    filteredBooks = filteredBooks.filter(
+      (book) => Number(book.price) >= Number(minPrice)
+    );
+  }
+  if (maxPrice) {
+    filteredBooks = filteredBooks.filter(
+      (book) => Number(book.price) <= Number(maxPrice)
+    );
   }
   if (sortBy === "Title") {
     filteredBooks = filteredBooks.slice().sort((a, b) => {
@@ -103,6 +150,54 @@ const UserDashboard = () => {
                 onChange={handleSearchChange}
               />
             </div>
+            <div className="filter-group">
+              <label>Language</label>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+              >
+                <option value="">All</option>
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Publisher</label>
+              <select
+                value={selectedPublisher}
+                onChange={(e) => setSelectedPublisher(e.target.value)}
+              >
+                <option value="">All</option>
+                {publishers.map((pub) => (
+                  <option key={pub} value={pub}>
+                    {pub}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Price Range</label>
+              <div className="price-range">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  min="0"
+                />
+                <span>-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  min="0"
+                />
+              </div>
+            </div>
           </aside>
 
           {/* Main Content */}
@@ -149,17 +244,31 @@ const UserDashboard = () => {
                       </div>
                     </div>
                     <div className="book-actions-list">
+                      {bookmarkActionError && (
+                        <div
+                          className="error-message"
+                          style={{ color: "red", marginBottom: "5px" }}
+                        >
+                          {bookmarkActionError}
+                        </div>
+                      )}
                       <button
                         className="bookmark-btn"
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           e.preventDefault();
-                          console.log(
-                            "Bookmarking bookId:",
-                            book.bookId || book.BookId
-                          );
-                          isBookmarked(book.bookId)
-                            ? removeBookmark(book.bookId)
-                            : addBookmark(book.bookId);
+                          try {
+                            const bookId = book.bookId || book.BookId;
+                            if (isBookmarked(bookId)) {
+                              await removeBookmark(bookId);
+                            } else {
+                              await addBookmark(bookId);
+                            }
+                          } catch (err) {
+                            console.error("Error handling bookmark:", err);
+                            setBookmarkActionError(
+                              err.message || "Failed to update bookmark"
+                            );
+                          }
                         }}
                       >
                         {isBookmarked(book.bookId) ? "Bookmarked" : "Bookmark"}

@@ -9,6 +9,7 @@ import {
   FaBullhorn,
   FaSignOutAlt,
   FaUserShield,
+  FaTag,
 } from "react-icons/fa";
 import "./Admin.css";
 import bookService from "../../services/bookService";
@@ -76,6 +77,11 @@ const AdminDashboard = () => {
               <li>
                 <Link to="/admin/Publisher">
                   <FaBullhorn className="admin-link-icon" /> Add Publisher
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin/discounts">
+                  <FaTag className="admin-link-icon" /> Manage Discounts
                 </Link>
               </li>
             </ul>

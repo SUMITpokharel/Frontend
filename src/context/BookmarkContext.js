@@ -9,13 +9,23 @@ export const useBookmarks = () => useContext(BookmarkContext);
 export const BookmarkProvider = ({ children }) => {
   const [bookmarkedBooks, setBookmarkedBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchBookmarks = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await bookmarkService.getBookmarks();
-      setBookmarkedBooks(data);
+      const normalized = data.map((bm) => ({
+        ...bm,
+        bookId: bm.bookId || bm.BookId,
+        bookMarkId: bm.bookMarkId || bm.BookMarkId,
+        memberId: bm.memberId || bm.MemberId,
+      }));
+      setBookmarkedBooks(normalized);
     } catch (err) {
+      console.error("Error fetching bookmarks:", err);
+      setError(err.message || "Failed to fetch bookmarks");
       setBookmarkedBooks([]);
     }
     setIsLoading(false);
@@ -26,13 +36,25 @@ export const BookmarkProvider = ({ children }) => {
   }, []);
 
   const addBookmark = async (bookId) => {
-    await bookmarkService.addBookmark(bookId);
-    fetchBookmarks();
+    setError(null);
+    try {
+      await bookmarkService.addBookmark(bookId);
+      await fetchBookmarks();
+    } catch (err) {
+      console.error("Error adding bookmark:", err);
+      setError(err.message || "Failed to add bookmark");
+    }
   };
 
   const removeBookmark = async (bookId) => {
-    await bookmarkService.removeBookmark(bookId);
-    fetchBookmarks();
+    setError(null);
+    try {
+      await bookmarkService.removeBookmark(bookId);
+      await fetchBookmarks();
+    } catch (err) {
+      console.error("Error removing bookmark:", err);
+      setError(err.message || "Failed to remove bookmark");
+    }
   };
 
   const isBookmarked = (bookId) =>
@@ -43,6 +65,7 @@ export const BookmarkProvider = ({ children }) => {
       value={{
         bookmarkedBooks,
         isLoading,
+        error,
         addBookmark,
         removeBookmark,
         isBookmarked,

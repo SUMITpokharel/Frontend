@@ -1,47 +1,57 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./BookGrid.css";
 
-export default function BookGrid({ books = [], loading, className = "" }) {
-  if (loading) return <div>Loading...</div>;
-  if (!books.length) return <div>No books found.</div>;
+const BookGrid = ({ books, loading, type, className }) => {
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
-    <div className={`book-grid ${className}`}>
+    <div className={`book-grid ${className || ""}`}>
       {books.map((book) => (
         <Link
-          to={`/user/book/${book.BookId || book.bookId}`}
-          key={book.BookId || book.bookId}
+          to={`/user/book/${book.bookId}`}
           className="book-card"
-          style={{ textDecoration: "none", color: "inherit" }}
+          key={book.bookId}
         >
-          {book.coverImage ? (
-            <img
-              src={book.coverImage}
-              alt={book.BookName || "No Image"}
-              style={{
-                width: "120px",
-                height: "180px",
-                objectFit: "cover",
-                borderRadius: "8px",
-                background: "#dde3ea",
-                marginBottom: "0.5rem",
-              }}
-            />
-          ) : (
-            <div className="book-img-placeholder"></div>
-          )}
-          <div>
-            <strong>Title:</strong> {book.BookName || book.bookName}
+          <div className="book-cover">
+            {book.discount?.onSale && (
+              <span className="book-sale-tag">On Sale</span>
+            )}
+            {book.isDiscounted && (
+              <span className="book-discount-tag">
+                -{book.discount.percentage}%
+              </span>
+            )}
+            {book.coverImage ? (
+              <img src={book.coverImage} alt={book.bookName} />
+            ) : (
+              <div className="book-img-placeholder"></div>
+            )}
           </div>
-          <div>
-            <strong>Publisher:</strong> {book.publisherName || "Unknown Author"}
+          <div className="book-info">
+            <h3>{book.bookName}</h3>
+            <p className="book-author">{book.publisherName || "Unknown"}</p>
+            <div className="book-price">
+              {book.isDiscounted ? (
+                <>
+                  <span className="price-discount">
+                    ${book.discountedPrice.toFixed(2)}
+                  </span>
+                  <span className="price-original">
+                    ${book.price.toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <span className="price-normal">${book.price.toFixed(2)}</span>
+              )}
+            </div>
           </div>
-          <div>
-            <strong>Price:</strong> ${book.price}
-          </div>
-          <button>Add to Cart</button>
         </Link>
       ))}
     </div>
   );
-}
+};
+
+export default BookGrid;
