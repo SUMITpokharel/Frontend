@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import bookService from "../../services/bookService";
+import discountService from "../../services/discountService";
 import { Star } from "lucide-react"; // Or use your own star icon
 import "./BookDetail.css"; // Create this for custom styles
 import { useBookmarks } from "../../context/BookmarkContext";
@@ -10,17 +11,26 @@ const BookDetail = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const [discount, setDiscount] = useState(null);
 
   useEffect(() => {
     setLoading(true);
-    bookService
-      .fetchBookDetailsById(id)
-      .then((data) => {
-        setBook(data);
+    Promise.all([
+      bookService.fetchBookDetailsById(id),
+      discountService.getActiveDiscounts(),
+    ])
+      .then(([bookData, discountsData]) => {
+        setBook(bookData);
+        // Find discount for this book
+        const foundDiscount = discountsData.find(
+          (d) => d.bookId === bookData.bookId
+        );
+        setDiscount(foundDiscount || null);
         setLoading(false);
       })
       .catch(() => {
         setBook(null);
+        setDiscount(null);
         setLoading(false);
       });
   }, [id]);
@@ -28,8 +38,11 @@ const BookDetail = () => {
   if (loading) return <div>Loading...</div>;
   if (!book) return <div>Book Not Found</div>;
 
-  const isDiscounted =
-    book.discountedPrice && book.discountedPrice < book.price;
+  const isDiscounted = discount && discount.percentage > 0;
+  const discountedPrice = isDiscounted
+    ? (book.price - book.price * (discount.percentage / 100)).toFixed(2)
+    : book.price;
+  const isOnSale = discount && discount.onSale;
   const isInStock = book.stock > 0;
   const bookId = book.BookId || book.bookId;
 
@@ -38,7 +51,7 @@ const BookDetail = () => {
       <div className="book-detail-grid">
         {/* Book Cover */}
         <div className="book-detail-cover">
-          {book.onSale && <span className="book-sale-tag">On Sale</span>}
+          {isOnSale && <span className="book-sale-tag">On Sale</span>}
           {isDiscounted && book.discountPercent && (
             <span className="book-discount-tag">-{book.discountPercent}%</span>
           )}
@@ -76,15 +89,24 @@ const BookDetail = () => {
           <div className="book-detail-price">
             {isDiscounted ? (
               <>
-                <span className="price-discount">
-                  ${book.discountedPrice.toFixed(2)}
-                </span>
+                <span className="price-discount">${discountedPrice}</span>
                 <span className="price-original">${book.price.toFixed(2)}</span>
+                <span className="discount-percentage">
+                  ({discount.percentage}% OFF)
+                </span>
+                {isOnSale && <span className="book-sale-tag">SALE</span>}
               </>
             ) : (
               <span className="price-normal">${book.price.toFixed(2)}</span>
             )}
           </div>
+          {isDiscounted && discount.startDate && discount.endDate && (
+            <div className="discount-period">
+              Discount valid:{" "}
+              {new Date(discount.startDate).toLocaleDateString()} -{" "}
+              {new Date(discount.endDate).toLocaleDateString()}
+            </div>
+          )}
           <div className="book-detail-stock">
             {isInStock ? (
               <span>

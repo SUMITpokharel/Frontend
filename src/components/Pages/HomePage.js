@@ -5,19 +5,45 @@ import Tabs from "../Tabs.js";
 import Filters from "../Filters.js";
 import BookGrid from "../BookGrid.js";
 import bookService from "../../services/bookService";
+import discountService from "../../services/discountService";
 import "./HomePage.css";
 import BannerAnnouncement from "../BannerAnnouncement";
 
 export default function HomePage() {
   const [books, setBooks] = useState([]);
+  const [discounts, setDiscounts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
 
   useEffect(() => {
-    bookService.getAllBooks().then((data) => {
-      setBooks(data);
+    Promise.all([
+      bookService.getAllBooks(),
+      discountService.getActiveDiscounts(),
+    ]).then(([booksData, discountsData]) => {
+      const booksWithDiscounts = booksData.map((book) => {
+        const discount = discountsData.find((d) => d.bookId === book.bookId);
+        if (discount) {
+          const discountedPrice =
+            book.price - (book.price * discount.percentage) / 100;
+          return {
+            ...book,
+            discount,
+            isDiscounted: true,
+            discountedPrice,
+          };
+        }
+        return { ...book, isDiscounted: false };
+      });
+      setBooks(booksWithDiscounts);
+      setDiscounts(discountsData);
       setLoading(false);
     });
   }, []);
+
+  // Pagination logic
+  const totalPages = Math.ceil(books.length / pageSize);
+  const paginatedBooks = books.slice((page - 1) * pageSize, page * pageSize);
 
   return (
     <>
@@ -35,16 +61,39 @@ export default function HomePage() {
               <Filters />
               <BookGrid
                 className="top-picks-grid"
-                books={books}
+                books={paginatedBooks}
                 loading={loading}
               />
             </div>
+            {/* Pagination Controls */}
+            <div className="pagination">
+              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+                Previous
+              </button>
+              <span>
+                Page {page} of {totalPages}
+              </span>
+              <button
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </button>
+            </div>
           </div>
           <div label="Currently Trending">
-            <BookGrid type="trending" books={books} loading={loading} />
+            <BookGrid
+              type="trending"
+              books={paginatedBooks}
+              loading={loading}
+            />
           </div>
           <div label="Editor's Choice">
-            <BookGrid type="editors-choice" books={books} loading={loading} />
+            <BookGrid
+              type="editors-choice"
+              books={paginatedBooks}
+              loading={loading}
+            />
           </div>
         </Tabs>
       </main>

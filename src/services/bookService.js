@@ -69,6 +69,11 @@ const bookService = {
       throw error;
     }
   },
+
+  add: async (bookData) => {
+    const response = await axios.post(API_URL, bookData);
+    return response.data.data;
+  },
 };
 
 export default bookService;
