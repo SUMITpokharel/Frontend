@@ -9,17 +9,8 @@ const bookService = {
   },
 
   getBookDetail: async (id) => {
-    try {
-      const response = await axios.get(`${API_URL}/detail/${id}`);
-      // Backend returns BookDetailDto directly or null
-      return response.data || null;
-    } catch (error) {
-      console.error(
-        "API Error:",
-        error.response?.data?.Errors || error.message
-      );
-      throw error;
-    }
+    const response = await axios.get(`${API_URL}/${id}/details`);
+    return response.data;
   },
 
   // Add method for filtered books (paginated)
@@ -68,6 +59,11 @@ const bookService = {
       );
       throw error;
     }
+  },
+
+  add: async (bookData) => {
+    const response = await axios.post(API_URL, bookData);
+    return response.data.data;
   },
 };
 

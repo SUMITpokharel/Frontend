@@ -130,7 +130,7 @@ const Wishlist = () => {
                         navigate(`/user/book/${bm.book.bookId || bm.book.id}`)
                       }
                     >
-                      {bm.book.title || bm.book.BookName || "No Title"}
+                      {bm.book.bookName || bm.book.title || "No Title"}
                     </h3>
                     <button
                       onClick={() => removeBookmark(bm.bookId)}
@@ -146,7 +146,7 @@ const Wishlist = () => {
                     </button>
                   </div>
                   <p style={{ color: "#666", marginBottom: 8 }}>
-                    {bm.book.author || bm.book.Author || "Unknown Author"}
+                    {bm.book.publisherName || "Unknown Publisher"}
                   </p>
                   <div style={{ marginTop: "auto", marginBottom: 12 }}>
                     <span style={{ fontWeight: 500 }}>
@@ -179,23 +179,8 @@ const Wishlist = () => {
               >
                 <span style={{ fontSize: 48, color: "#bbb" }}>🤍</span>
                 <h2 style={{ fontSize: 24, fontWeight: 600, margin: "16px 0" }}>
-                  Book not found
+                  Book not found (it may have been removed)
                 </h2>
-                <button
-                  style={{
-                    background: "#4a90e2",
-                    color: "#fff",
-                    padding: "10px 32px",
-                    border: "none",
-                    borderRadius: 4,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    marginBottom: 12,
-                  }}
-                  onClick={() => navigate("/user/dashboard")}
-                >
-                  Browse Books
-                </button>
                 <button
                   style={{
                     background: "#e53935",
