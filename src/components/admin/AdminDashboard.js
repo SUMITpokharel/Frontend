@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import "./Admin.css";
 import bookService from "../../services/bookService";
+import AdminCharts from "./AdminCharts";
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -120,6 +121,10 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="admin-charts">
+          <AdminCharts />
         </div>
       </div>
     </div>
