@@ -6,7 +6,6 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="top-row">
         <div className="logo">LOGO</div>
-        <input type="text" placeholder="Search by title, ISBN, description" />
         <div className="auth-links">
           <Link to="/login">Sign in</Link> /{" "}
           <Link to="/register">Register</Link>
@@ -33,6 +32,7 @@ export default function Navbar() {
           align-items: center;
           justify-content: space-between;
           margin-bottom: 15px;
+          gap: 20px;
         }
 
         .logo {
@@ -41,14 +41,7 @@ export default function Navbar() {
           color: #333;
         }
 
-        input[type="text"] {
-          flex: 1;
-          margin: 0 20px;
-          padding: 8px;
-          font-size: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
+
 
         .auth-links {
           display: flex;
