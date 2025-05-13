@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import cartService from "../../services/cartService";
-import orderService from "../../services/orderService";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import Order from "./Order";
 
 const Cart = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showOrder, setShowOrder] = useState(false);
 
   useEffect(() => {
     cartService
@@ -44,18 +41,6 @@ const Cart = () => {
     0
   );
 
-  const handleOrder = () => {
-    if (cart.cartItems.length > 0) {
-      setShowOrder(true);
-    }
-  };
-
-  const closeOrder = () => {
-    setShowOrder(false);
-    // Refresh cart after order is closed
-    cartService.getCart().then(data => setCart(data));
-  };
-
   return (
     <CartContainer>
       <h1>Shopping Cart</h1>
@@ -69,13 +54,30 @@ const Cart = () => {
                   <button
                     className="remove-btn"
                     onClick={async () => {
-                      await cartService.removeCartItem(item.cartItemId);
-                      setCart({
-                        ...cart,
-                        cartItems: cart.cartItems.filter(
-                          (ci) => ci.cartItemId !== item.cartItemId
-                        ),
-                      });
+                      try {
+                        await cartService.removeCartItem(item.cartItemId);
+                        setCart({
+                          ...cart,
+                          cartItems: cart.cartItems.filter(
+                            (ci) => ci.cartItemId !== item.cartItemId
+                          ),
+                        });
+                      } catch (err) {
+                        if (err.response && err.response.status === 404) {
+                          alert(
+                            "Cart item not found. It may have already been removed."
+                          );
+                          // Optionally, remove it from UI anyway:
+                          setCart({
+                            ...cart,
+                            cartItems: cart.cartItems.filter(
+                              (ci) => ci.cartItemId !== item.cartItemId
+                            ),
+                          });
+                        } else {
+                          alert("Failed to remove cart item.");
+                        }
+                      }
                     }}
                   >
                     🗑️
@@ -90,53 +92,29 @@ const Cart = () => {
         <div className="order-summary">
           <h2>Order Summary</h2>
           <div className="summary-row">
-            <span>Total Items: {cart.cartItems.length}</span>
-            <span>{cart.cartItems.length} item(s)</span>
-          </div>
-          <div className="summary-row">
-            <span>Subtotal</span>
+            <span>Total</span>
             <span>${cartTotal.toFixed(2)}</span>
           </div>
-          <div className="summary-row">
-            <span>Shipping</span>
-            <span>Free</span>
-          </div>
-          <div className="summary-row">
-            <span>Tax</span>
-            <span>${(cartTotal * 0.13).toFixed(2)}</span>
-          </div>
-          <div className="total-row">
-            <span>Total</span>
-            <span>${(cartTotal * 1.13).toFixed(2)}</span>
-          </div>
-          <button
-            onClick={handleOrder}
-            className="checkout-btn"
-            disabled={cart.cartItems.length === 0}
-          >
-            Proceed to Checkout
-          </button>
-          <button
-            onClick={() => navigate("/user/dashboard")}
-            className="continue-shopping-btn"
-          >
-            Continue Shopping
-          </button>
         </div>
       </div>
+
       <button
-        onClick={() => {
-          setLoading(true);
-          cartService.getCart().then((data) => {
-            setCart(data);
-            setLoading(false);
-          });
+        onClick={async () => {
+          try {
+            await cartService.placeOrder(cart.cartItems);
+            alert("Order placed successfully!");
+            setCart({ cartItems: [] }); // Optionally clear cart in UI
+          } catch (err) {
+            alert(
+              err.response?.data?.message ||
+                err.message ||
+                "Failed to place order."
+            );
+          }
         }}
-        className="refresh-btn"
       >
-        Refresh Cart
+        Place Order
       </button>
-      {showOrder && <Order cart={cart} onClose={closeOrder} />}
     </CartContainer>
   );
 };

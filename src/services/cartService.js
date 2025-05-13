@@ -26,22 +26,44 @@ const cartService = {
   },
   // Update a cart item's quantity
   updateCartItem: async (cartItemId, quantity) => {
-    const res = await axios.put(`${API_URL}/${cartItemId}`, {
-      cartItemId,
-      quantity,
-    });
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      `${API_URL}/${cartItemId}`,
+      {
+        cartItemId,
+        quantity,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return res.data;
   },
   // Remove a cart item
   removeCartItem: async (cartItemId) => {
-    const res = await axios.delete(`${API_URL}/${cartItemId}`);
-    return res.data;
-  },
-  clearCart: async () => {
     const token = localStorage.getItem("token");
-    const res = await axios.delete(API_URL, {
+    const res = await axios.delete(`${API_URL}/cart-item/${cartItemId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    return res.data;
+  },
+  // Remove the entire cart
+  removeCart: async (cartId) => {
+    const token = localStorage.getItem("token");
+    const res = await axios.delete(`${API_URL}/${cartId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  },
+  placeOrder: async (cartItems) => {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://localhost:7256/api/MemberOrder/place-order",
+      cartItems,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     return res.data;
   },
 };

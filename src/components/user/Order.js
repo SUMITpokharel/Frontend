@@ -13,19 +13,35 @@ const Order = ({ cart, onClose }) => {
       setLoading(true);
       setError(null);
       
+      // Log cart data for debugging
+      console.log('Cart Data:', cart);
+      
+      // Validate cart data
+      if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
+        throw new Error('Cart is empty or invalid');
+      }
+
       // Prepare order items
-      const orderItems = cart.cartItems.map(item => ({
-        cartItemId: item.cartItemId || '',
-        cartId: cart.cartId || '',
-        bookId: item.bookId || '',
-        bookName: item.bookName || '',
-        quantity: item.quantity || 1,
-        price: item.price || 0,
-        totalPrice: (item.price || 0) * (item.quantity || 1)
-      }));
+      const orderItems = cart.cartItems.map(item => {
+        if (!item.cartItemId || !item.bookId) {
+          throw new Error('Invalid cart item data');
+        }
+        return {
+          cartItemId: item.cartItemId,
+          cartId: cart.cartId || '',
+          bookId: item.bookId,
+          bookName: item.bookName || '',
+          quantity: item.quantity || 1,
+          price: item.price || 0,
+          totalPrice: (item.price || 0) * (item.quantity || 1)
+        };
+      });
+
+      // Log order items for debugging
+      console.log('Order Items:', orderItems);
 
       // Place the order
-      const response = await orderService.placeOrder(orderItems);
+      const orderId = await orderService.placeOrder(orderItems);
       
       // Clear the cart after successful order
       await cartService.clearCart();
@@ -33,14 +49,27 @@ const Order = ({ cart, onClose }) => {
       // Show success message with order ID
       setSuccess({
         message: "Order placed successfully!",
-        orderId: response.orderId || 'ORDER-' + Date.now()
+        orderId: orderId || 'ORDER-' + Date.now()
       });
     } catch (err) {
-      console.error("Order error:", err);
-      const errorMessage = err.response?.data?.error?.errorMessage || 
-        err.response?.data?.error || 
-        err.message || 
-        "Failed to place order. Please try again.";
+      console.error('Order error details:', {
+        error: err,
+        response: err.response,
+        data: err.response?.data,
+        status: err.response?.status
+      });
+      
+      let errorMessage = 'Failed to place order. Please try again.';
+      if (err.response?.data?.error?.errorMessage) {
+        errorMessage = err.response.data.error.errorMessage;
+      } else if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
     } finally {
       setLoading(false);
