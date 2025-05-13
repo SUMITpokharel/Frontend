@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useBookmarks } from "../../context/BookmarkContext";
 import bookService from "../../services/bookService";
 import discountService from "../../services/discountService";
+import cartService from "../../services/cartService";
+import { AdvancedImage } from '@cloudinary/react';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { Star } from "lucide-react"; // Or use your own star icon
 import "./BookDetail.css"; // Create this for custom styles
-import { useBookmarks } from "../../context/BookmarkContext";
+
+// Create Cloudinary instance
+const cld = new Cloudinary({ cloud: { cloudName: 'dyfg9vlvg' } });
+
+// Function to get optimized image
+const getOptimizedImage = (publicId) => {
+  return cld.image(publicId)
+    .format('auto')
+    .quality('auto')
+    .resize(auto().gravity(autoGravity()).width(200).height(300));
+};
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -55,17 +73,11 @@ const BookDetail = () => {
           {isDiscounted && book.discountPercent && (
             <span className="book-discount-tag">-{book.discountPercent}%</span>
           )}
-          {book.coverImage ? (
-            <img
-              src={book.coverImage}
+          {book.imageUrl ? (
+            <AdvancedImage 
+              cldImg={getOptimizedImage(book.imageUrl)} 
               alt={book.BookName || "No Image"}
-              style={{
-                width: "200px",
-                height: "300px",
-                objectFit: "cover",
-                borderRadius: "12px",
-                background: "#dde3ea",
-              }}
+              className="book-cover-image"
             />
           ) : (
             <div className="book-img-placeholder"></div>

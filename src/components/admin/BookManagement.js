@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import bookService from "../../services/bookService";
+import cloudinaryService from "../../services/cloudinaryService";
 import {
   Container,
   TextField,
@@ -23,12 +24,14 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  InputAdornment,
 } from "@mui/material";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { styled } from '@mui/material/styles';
 
 const initialFormState = {
   bookName: "",
@@ -40,6 +43,7 @@ const initialFormState = {
   publisherId: "",
   publicationDate: dayjs().toISOString(),
   isComingSoon: false,
+  imageUrl: "",
 };
 
 const BookManagement = () => {
@@ -49,6 +53,36 @@ const BookManagement = () => {
   const [success, setSuccess] = useState(false);
   const [publishers, setPublishers] = useState([]);
   const [books, setBooks] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImageChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedImage) {
+      setError('Please select an image file first');
+      return;
+    }
+
+    try {
+      setError(null); // Clear any previous errors
+      const imageUrl = await cloudinaryService.uploadImage(selectedImage);
+      setFormData(prev => ({ ...prev, imageUrl }));
+      setSuccess('Image uploaded successfully!');
+    } catch (error) {
+      setError(error.message);
+    }
+  };
   const [editMode, setEditMode] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -142,20 +176,25 @@ const BookManagement = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    const payload = {
-      BookName: formData.bookName,
-      Isbn: formData.ISBN,
-      Price: parseFloat(formData.price),
-      Description: formData.description,
-      Language: formData.language,
-      Stock: parseInt(formData.stock),
-      PublisherId: formData.publisherId,
-      PublicationDate: formData.publicationDate || dayjs().toISOString(),
-      IsComingSoon: formData.isComingSoon,
-    };
+    setSuccess(false);
 
     try {
+      if (selectedImage) {
+        await handleImageUpload();
+      }
+      const payload = {
+        BookName: formData.bookName,
+        Isbn: formData.ISBN,
+        Price: parseFloat(formData.price),
+        Description: formData.description,
+        Language: formData.language,
+        Stock: parseInt(formData.stock),
+        PublisherId: formData.publisherId,
+        PublicationDate: formData.publicationDate || dayjs().toISOString(),
+        IsComingSoon: formData.isComingSoon,
+        ImageUrl: formData.imageUrl,
+      };
+
       if (editMode) {
         await bookService.updateBook(selectedBookId, payload);
         setSuccess(true);
@@ -167,13 +206,7 @@ const BookManagement = () => {
       }
       fetchBooks();
     } catch (err) {
-      console.error("Error:", err);
-      const errorMessage =
-        err.response?.data?.message ||
-        JSON.stringify(err.response?.data) ||
-        err.message ||
-        `Failed to ${editMode ? "update" : "add"} book.`;
-      setError(errorMessage);
+      setError(err.response?.data?.message || 'Failed to add book');
     } finally {
       setLoading(false);
     }
@@ -207,22 +240,50 @@ const BookManagement = () => {
         </Typography>
 
         <TextField
-          label="Book Name"
-          name="bookName"
-          value={formData.bookName}
-          onChange={handleChange}
-          required
           fullWidth
+          label="Book Name"
+          value={formData.bookName}
+          onChange={(e) => setFormData({ ...formData, bookName: e.target.value })}
+          margin="normal"
+          required
         />
 
         <TextField
-          label="ISBN"
-          name="ISBN"
-          value={formData.ISBN}
-          onChange={handleChange}
-          required
           fullWidth
+          label="ISBN"
+          value={formData.ISBN}
+          onChange={(e) => setFormData({ ...formData, ISBN: e.target.value })}
+          margin="normal"
+          required
         />
+
+        <Box sx={{ mt: 2 }}>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            type="file"
+            onChange={handleImageChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button
+              variant="contained"
+              component="span"
+              startIcon={previewImage ? <img src={previewImage} alt="Preview" style={{ width: 20, height: 20 }} /> : null}
+            >
+              {previewImage ? 'Change Image' : 'Upload Book Image'}
+            </Button>
+          </label>
+        </Box>
+        {previewImage && (
+          <Box sx={{ mt: 2 }}>
+            <img
+              src={previewImage}
+              alt="Preview"
+              style={{ maxWidth: '100%', maxHeight: 200 }}
+            />
+          </Box>
+        )}
 
         <TextField
           label="Price"

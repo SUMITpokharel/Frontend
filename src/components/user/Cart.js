@@ -36,7 +36,8 @@ const Cart = () => {
       </div>
     );
 
-  const cartTotal = cart.cartItems.reduce(
+  const cartItems = Array.isArray(cart.cartItems) ? cart.cartItems : [];
+  const cartTotal = cartItems.reduce(
     (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
     0
   );
@@ -101,9 +102,36 @@ const Cart = () => {
       <button
         onClick={async () => {
           try {
+            const discounted = await cartService.applyDiscount(cart.cartItems);
+            // Try to handle both array and object responses
+            if (Array.isArray(discounted)) {
+              setCart({ ...cart, cartItems: discounted });
+            } else if (discounted && Array.isArray(discounted.cartItems)) {
+              setCart({ ...cart, cartItems: discounted.cartItems });
+            } else if (discounted && Array.isArray(discounted.data)) {
+              setCart({ ...cart, cartItems: discounted.data });
+            } else {
+              alert("Unexpected discount response from server.");
+            }
+            alert("Discount applied!");
+          } catch (err) {
+            alert(
+              err.response?.data?.message ||
+                err.message ||
+                "Failed to apply discount."
+            );
+          }
+        }}
+      >
+        Apply Discount
+      </button>
+
+      <button
+        onClick={async () => {
+          try {
             await cartService.placeOrder(cart.cartItems);
             alert("Order placed successfully!");
-            setCart({ cartItems: [] }); // Optionally clear cart in UI
+            navigate("/user/orders");
           } catch (err) {
             alert(
               err.response?.data?.message ||

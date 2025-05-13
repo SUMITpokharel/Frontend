@@ -84,6 +84,11 @@ const AdminDashboard = () => {
                 <Link to="/admin/discounts">
                   <FaTag className="admin-link-icon" /> Manage Discounts
                 </Link>
+                <li>
+                <Link to="/admin/assign-staff">
+                  <FaUsers className="admin-link-icon" /> Assign Staff
+                </Link>
+              </li>
               </li>
             </ul>
           </nav>

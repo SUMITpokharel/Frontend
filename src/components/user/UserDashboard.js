@@ -9,6 +9,21 @@ import bookService from "../../services/bookService";
 import cartService from "../../services/cartService";
 import discountService from "../../services/discountService";
 import BannerAnnouncement from "../BannerAnnouncement";
+import { AdvancedImage } from '@cloudinary/react';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+
+// Create Cloudinary instance
+const cld = new Cloudinary({ cloud: { cloudName: 'dyfg9vlvg' } });
+
+// Function to get optimized image
+const getOptimizedImage = (publicId) => {
+  return cld.image(publicId)
+    .format('auto')
+    .quality('auto')
+    .resize(auto().gravity(autoGravity()).width(300).height(450));
+};
 
 const UserDashboard = () => {
   const [books, setBooks] = useState([]);
@@ -263,6 +278,15 @@ const UserDashboard = () => {
                       key={book.BookId || book.bookId}
                     >
                       <div className="book-img-placeholder">
+                        {book.imageUrl ? (
+                          <AdvancedImage 
+                          cldImg={getOptimizedImage(book.imageUrl)} 
+                          alt={book.bookName}
+                          className="book-cover-image"
+                        />  
+                        ) : (
+                          <div className="book-img-placeholder"></div>
+                        )}
                         {isOnSale && <div className="sale-badge">SALE</div>}
                       </div>
                       <div className="book-info-list">
@@ -273,8 +297,7 @@ const UserDashboard = () => {
                           Publisher: {book.publisherName || "Unknown"}
                         </div>
                         <div className="book-description">
-                          Description:{" "}
-                          {book.Description || book.description || "N/A"}
+                          Description: {book.Description || book.description || "N/A"}
                         </div>
                         <div className="book-isbn">
                           ISBN: {book.Isbn || book.isbn || "N/A"}
@@ -351,8 +374,6 @@ const UserDashboard = () => {
                 })
               )}
             </div>
-
-            {/* Pagination Controls */}
             <div className="pagination">
               <button disabled={page === 1} onClick={() => setPage(page - 1)}>
                 Previous

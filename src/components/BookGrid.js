@@ -1,6 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./BookGrid.css";
+import { AdvancedImage } from '@cloudinary/react';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+
+// Create Cloudinary instance
+const cld = new Cloudinary({ cloud: { cloudName: 'dyfg9vlvg' } });
+
+// Function to get optimized image
+const getOptimizedImage = (publicId) => {
+  return cld.image(publicId)
+    .format('auto')
+    .quality('auto')
+    .resize(auto().gravity(autoGravity()).width(300).height(450));
+};
 
 const BookGrid = ({ books, loading, type, className }) => {
   if (loading) {
@@ -24,8 +39,12 @@ const BookGrid = ({ books, loading, type, className }) => {
                 -{book.discount.percentage}%
               </span>
             )}
-            {book.coverImage ? (
-              <img src={book.coverImage} alt={book.bookName} />
+            {book.imageUrl ? (
+              <AdvancedImage 
+                cldImg={getOptimizedImage(book.imageUrl)} 
+                alt={book.bookName}
+                className="book-cover-image"
+              />
             ) : (
               <div className="book-img-placeholder"></div>
             )}

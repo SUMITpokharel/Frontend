@@ -1,50 +1,48 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'https://localhost:7256';
+const API_URL = "https://localhost:7256/api/MemberOrder";
 
 const orderService = {
-  placeOrder: async (orderItems) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/MemberOrder/place-order`, orderItems);
-      if (response.data && response.data.isSuccess) {
-        // Return the order ID from the response
-        return response.data.data?.orderId || response.data.data?.OrderId;
+  // Get all orders for the current user
+  getOrders: async () => {
+    const token = localStorage.getItem("token");
+    const res = await axios.get(
+      "https://localhost:7256/api/MemberOrder/my-orders",
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
-      throw new Error(response.data?.error?.errorMessage || 'Failed to place order');
-    } catch (error) {
-      console.error('Error placing order:', error);
-      throw new Error(error.response?.data?.error?.errorMessage || 'Failed to place order');
-    }
+    );
+    return res.data.data;
   },
-
+  // Cancel an order by ID
   cancelOrder: async (orderId) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/MemberOrder/cancel-order`, orderId);
-      if (response.data && response.data.isSuccess) {
-        return response.data.data;
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      `${API_URL}/cancel-order`,
+      JSON.stringify(orderId),
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-      throw new Error(response.data?.error?.errorMessage || 'Failed to cancel order');
-    } catch (error) {
-      console.error('Error canceling order:', error);
-      throw new Error(error.response?.data?.error?.errorMessage || 'Failed to cancel order');
-    }
+    );
+    return res.data;
   },
-
   processClaim: async (claimCode, orderId) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/Order/process-claim`, {
-        claimCode,
-        orderId
-      });
-      if (response.data && response.data.isSuccess) {
-        return response.data.data;
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      "https://localhost:7256/api/Order/process-claim",
+      { claimCode, orderId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-      throw new Error(response.data?.error?.errorMessage || 'Failed to process claim');
-    } catch (error) {
-      console.error('Error processing claim:', error);
-      throw new Error(error.response?.data?.error?.errorMessage || 'Failed to process claim');
-    }
-  }
+    );
+    return res.data;
+  },
 };
 
 export default orderService;

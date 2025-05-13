@@ -27,6 +27,8 @@ import AdminDashboards from "./components/admin/Announcement";
 import PublisherForm from "./components/admin/PublisherForm";
 import DiscountManagement from "./components/admin/DiscountManagement";
 import Books from "./components/books/Books";
+import AssignStaff from "./components/admin/AssignStaff";
+import OrderHistory from "./services/OrderHistory";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -113,6 +115,14 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/assign-staff"
+              element={
+                <AdminRoute>
+                  <AssignStaff />
+                </AdminRoute>
+              }
+            />
 
             {/* User Routes */}
             <Route
@@ -123,6 +133,7 @@ function App() {
                 </UserRoute>
               }
             />
+            <Route path="/user/orders" element={<OrderHistory />} />
             <Route path="/book/:bookId" element={<BookDetail />} />
             <Route path="/books" element={<Books />} />
             <Route path="/books/:type" element={<Books />} />
