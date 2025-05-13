@@ -46,14 +46,35 @@
 }
 
 .price-discount {
-  color: #e53935;
+  color: #ff6b6b;
   font-weight: bold;
-  margin-right: 1rem;
+  margin-right: 10px;
 }
 
 .price-original {
   text-decoration: line-through;
   color: #888;
+  margin-left: 10px;
+}
+
+.discount-percentage {
+  color: #ff6b6b;
+  margin-left: 10px;
+}
+
+.book-sale-tag {
+  background: #ff6b6b;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.discount-period {
+  color: #2563eb;
+  font-size: 0.95em;
+  margin-top: 5px;
 }
 
 .book-detail-stock {

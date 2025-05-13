@@ -44,9 +44,7 @@ const authService = {
   login: async (credentials) => {
     try {
       const response = await axios.post(`${API_URL}/login`, credentials);
-      const token = response.data.data; // Changed from response.data
-      // Alternative if backend returns { token: "..." }
-      // const token = response.data.token;
+      const token = response.data.data; 
 
       if (typeof token !== "string") {
         throw new Error("Invalid token format received from server");

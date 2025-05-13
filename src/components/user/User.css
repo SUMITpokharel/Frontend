@@ -522,3 +522,44 @@ body {
 }
 
 /* --- END NAVBAR STYLES --- */
+
+.book-card-list.on-sale {
+  border: 2px solid #ff6b6b;
+  position: relative;
+}
+
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.book-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.discounted-price {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.discount-percentage {
+  color: #ff6b6b;
+  font-size: 0.9em;
+}

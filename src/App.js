@@ -26,6 +26,7 @@ import OrderConfirmation from "./components/user/OrderConfirmation";
 import AdminDashboards from "./components/admin/Announcement";
 import PublisherForm from "./components/admin/PublisherForm";
 import DiscountManagement from "./components/admin/DiscountManagement";
+import Books from "./components/books/Books";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -121,8 +122,9 @@ function App() {
                 </UserRoute>
               }
             />
-            <Route path="/user/book/:id" element={<BookDetail />} />
-
+            <Route path="/book/:bookId" element={<BookDetail />} />
+            <Route path="/books" element={<Books />} />
+            <Route path="/books/:type" element={<Books />} />
             <Route
               path="/user/cart"
               element={

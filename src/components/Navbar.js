@@ -14,12 +14,10 @@ export default function Navbar() {
       </div>
 
       <div className="nav-links">
-        <Link to="/">All Books</Link>
-        <Link to="/">Bestsellers</Link>
-        <Link to="/">Award Winners</Link>
-        <Link to="/">New Releases</Link>
-        <Link to="/">New Arrivals</Link>
-        <Link to="/">Deals</Link>
+        <Link to="/books">All Books</Link>
+        <Link to="/books/new-releases">New Releases</Link>
+        <Link to="/books/coming-soon">New Arrivals</Link>
+        <Link to="/books/deals">Deals</Link>
       </div>
 
       <style jsx>{`
