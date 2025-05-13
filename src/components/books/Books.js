@@ -1,43 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import './Books.css';
 
-const Books = () => {
+const Books = ({ type: propType }) => {
+  const params = useParams();
+  const type = propType || params.type;
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { type } = useParams();
   const navigate = useNavigate();
 
   const fetchBooks = async () => {
     try {
       let url = 'https://localhost:7256/api/Book';
-      
-      // Add filters based on the type
       if (type === 'new-releases') {
-        // Get books sorted by publication date
         url += '/filtered-books?SortByPriceDescending=false';
       }
-
       const response = await axios.get(url);
-      
-      // Handle coming soon books
+
       if (type === 'coming-soon') {
         const filteredBooks = response.data.data.filter(book => book.isComingSoon);
         setBooks(filteredBooks);
-      }
-      // Handle deals
-      else if (type === 'deals') {
+      } else if (type === 'deals') {
         const discountsResponse = await axios.get('https://localhost:7256/api/admin/discounts/active');
         const discountBooks = discountsResponse.data.data;
         const allBooks = response.data.data;
-        const discountedBooks = allBooks.filter(book => 
+        const discountedBooks = allBooks.filter(book =>
           discountBooks.some(discount => discount.bookId === book.bookId)
         );
         setBooks(discountedBooks);
-      }
-      // Default case for all books
-      else {
+      } else {
         setBooks(response.data.data);
       }
     } catch (error) {
@@ -50,6 +43,7 @@ const Books = () => {
 
   useEffect(() => {
     fetchBooks();
+    // eslint-disable-next-line
   }, [type]);
 
   if (loading) {
@@ -82,7 +76,17 @@ const Books = () => {
 
   return (
     <div className="books-container">
-      <h1>{type ? `${type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}` : 'All Books'}</h1>
+      <h1>
+        {type
+          ? type === 'new-releases'
+            ? 'New Arrivals'
+            : type === 'coming-soon'
+            ? 'Coming Soon'
+            : type === 'deals'
+            ? 'Deals'
+            : type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')
+          : 'All Books'}
+      </h1>
       <div className="books-grid">
         {books.map((book) => (
           <div key={book.bookId} className="book-card">

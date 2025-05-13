@@ -50,7 +50,7 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-content">
-        <h2>Book Management System</h2>
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email Address</label>

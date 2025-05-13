@@ -32,6 +32,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { styled } from '@mui/material/styles';
+import "./BookManagement.css";
 
 const initialFormState = {
   bookName: "",

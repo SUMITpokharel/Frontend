@@ -56,21 +56,6 @@ const AdminDashboard = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/admin/users">
-                  <FaUsers className="admin-link-icon" /> Manage Users
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin/orders">
-                  <FaClipboardList className="admin-link-icon" /> Manage Orders
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin/reports">
-                  <FaDollarSign className="admin-link-icon" /> View Reports
-                </Link>
-              </li>
-              <li>
                 <Link to="/admin/announcement">
                   <FaBullhorn className="admin-link-icon" /> Announcement
                 </Link>
@@ -84,11 +69,11 @@ const AdminDashboard = () => {
                 <Link to="/admin/discounts">
                   <FaTag className="admin-link-icon" /> Manage Discounts
                 </Link>
-                <li>
+              </li>
+              <li>
                 <Link to="/admin/assign-staff">
                   <FaUsers className="admin-link-icon" /> Assign Staff
                 </Link>
-              </li>
               </li>
             </ul>
           </nav>

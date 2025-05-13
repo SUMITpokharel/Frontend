@@ -1,72 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaBookOpen } from "react-icons/fa";
+import "./Navbar.css";
 
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 50;
+      setScrolled(isScrolled);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="navbar">
-      <div className="top-row">
-        <div className="logo">LOGO</div>
+    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+      <div className="navbar-container">
+        <div className="navbar-logo">
+          <FaBookOpen className="navbar-logo-icon" />
+          <span>BookShelf</span>
+        </div>
+        <div className="nav-links">
+          <Link to="/books" className="active">All Books</Link>
+          <Link to="/books/new-releases">New Releases</Link>
+          <Link to="/books/coming-soon">New Arrivals</Link>
+          <Link to="/books/deals">Deals</Link>
+        </div>
         <div className="auth-links">
-          <Link to="/login">Sign in</Link> /{" "}
-          <Link to="/register">Register</Link>
+          <Link to="/login">Sign in</Link>
+          <Link to="/register" className="btn-primary">Register</Link>
         </div>
       </div>
-
-      <div className="nav-links">
-        <Link to="/books">All Books</Link>
-        <Link to="/books/new-releases">New Releases</Link>
-        <Link to="/books/coming-soon">New Arrivals</Link>
-        <Link to="/books/deals">Deals</Link>
-      </div>
-
-      <style jsx>{`
-        .navbar {
-          background-color: white;
-          padding: 20px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          font-family: Arial, sans-serif;
-        }
-
-        .top-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 15px;
-          gap: 20px;
-        }
-
-        .logo {
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: #333;
-        }
-
-
-
-        .auth-links {
-          display: flex;
-          gap: 8px;
-          color: #0070f3;
-        }
-
-        .nav-links {
-          display: flex;
-          gap: 20px;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-
-        .nav-links a {
-          text-decoration: none;
-          color: #333;
-          font-size: 1rem;
-          font-weight: 500;
-        }
-
-        .nav-links a:hover {
-          color: #0070f3;
-        }
-      `}</style>
     </nav>
   );
 }

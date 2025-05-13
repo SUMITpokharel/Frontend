@@ -1,0 +1,318 @@
+/* --- ASSIGN STAFF STYLES --- */
+
+:root {
+  --primary-color: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d428a;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.assign-staff-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.assign-staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--bg-secondary);
+  padding-bottom: 1rem;
+}
+
+.assign-staff-title {
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* Loading State */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-secondary);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* User List Container */
+.user-list-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+}
+
+/* Search and Filter */
+.search-filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* User Table */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--bg-secondary);
+}
+
+.user-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--bg-secondary);
+}
+
+.user-table tr:hover {
+  background: var(--bg-primary);
+}
+
+/* User Status Badges */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-admin {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.status-user {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+}
+
+.status-staff {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+}
+
+/* Action Buttons */
+.action-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.assign-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-primary);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Success and Error Messages */
+.message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.message-success {
+  background: var(--success-color);
+}
+
+.message-error {
+  background: var(--error-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .assign-staff-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .assign-staff-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .search-filter {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .user-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .action-btns {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .assign-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* Form Elements */
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--bg-secondary);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Status Indicators */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.status-active {
+  background: var(--success-color);
+}
+
+.status-inactive {
+  background: var(--error-color);
+}
+
+/* Action Confirmation */
+.confirmation-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.page-btn:not(.active) {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.page-btn:not(.active):hover {
+  background: var(--bg-primary);
+  color: var(--primary-color);
+}
