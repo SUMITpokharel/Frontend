@@ -62,9 +62,10 @@ function App() {
       <AuthProvider>
         <BookmarkProvider>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-
             {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/books" element={<Books />} />
+            <Route path="/user/book/:id" element={<BookDetail />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

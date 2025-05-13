@@ -54,48 +54,32 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="page-content">
-        {/* Top Picks Section */}
-        <Tabs>
-          <div label="Top Picks">
-            <div className="filters-and-grid">
-              <Filters />
-              <BookGrid
-                className="top-picks-grid"
-                books={paginatedBooks}
-                loading={loading}
-              />
-            </div>
-            {/* Pagination Controls */}
-            <div className="pagination">
-              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-                Previous
-              </button>
-              <span>
-                Page {page} of {totalPages}
-              </span>
-              <button
-                disabled={page === totalPages}
-                onClick={() => setPage(page + 1)}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-          <div label="Currently Trending">
+        <div className="top-picks-section">
+          <h2>Top Picks</h2>
+          <div className="filters-and-grid">
+            <Filters />
             <BookGrid
-              type="trending"
+              className="top-picks-grid"
               books={paginatedBooks}
               loading={loading}
             />
           </div>
-          <div label="Editor's Choice">
-            <BookGrid
-              type="editors-choice"
-              books={paginatedBooks}
-              loading={loading}
-            />
+          {/* Pagination Controls */}
+          <div className="pagination">
+            <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              Previous
+            </button>
+            <span>
+              Page {page} of {totalPages}
+            </span>
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              Next
+            </button>
           </div>
-        </Tabs>
+        </div>
       </main>
 
       {/* Newsletter Signup */}

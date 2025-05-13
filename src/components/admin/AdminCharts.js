@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -10,37 +10,30 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  BarChart,
-  Bar,
-  ScatterChart,
-  Scatter,
-  CartesianGrid as BarGrid,
-  CartesianGrid as ScatterGrid
+  Cell
 } from 'recharts';
-import bookService from '../../services/bookService';
-import orderService from '../../services/orderService';
-import discountService from '../../services/discountService';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
 const AdminCharts = () => {
-  const [bookSalesData, setBookSalesData] = useState([]);
-  const [publisherData, setPublisherData] = useState([]);
+  const [bookStockData, setBookStockData] = useState([]);
   const [discountData, setDiscountData] = useState([]);
-  const [stockData, setStockData] = useState([]);
+  const [orderStatusData, setOrderStatusData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all([
-          fetchBookSalesData(),
-          fetchPublisherData(),
-          fetchDiscountData(),
-          fetchStockData()
+        const [books, discounts, orders] = await Promise.all([
+          fetchBooks(),
+          fetchActiveDiscounts(),
+          fetchOrders()
         ]);
+        
+        setBookStockData(books);
+        setDiscountData(discounts);
+        setOrderStatusData(orders);
       } catch (err) {
         setError('Failed to load chart data');
       } finally {
@@ -51,162 +44,116 @@ const AdminCharts = () => {
     fetchData();
   }, []);
 
-  const fetchBookSalesData = async () => {
+  const fetchBooks = async () => {
     try {
-      const orders = await orderService.getOrders();
-      const salesData = orders.reduce((acc, order) => {
-        const date = new Date(order.orderDate).toLocaleDateString();
-        const total = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const existing = acc.find(d => d.date === date);
-        if (existing) {
-          existing.sales += total;
-          existing.orders++;
-        } else {
-          acc.push({ date, sales: total, orders: 1 });
-        }
-        return acc;
-      }, []);
-      setBookSalesData(salesData);
+      const response = await fetch('https://localhost:7256/api/Book');
+      const data = await response.json();
+      return data.data.map(book => ({
+        name: book.bookName,
+        stock: book.stock,
+        price: book.price
+      }));
     } catch (error) {
-      console.error('Error fetching sales data:', error);
+      console.error('Error fetching books:', error);
+      return [];
     }
   };
 
-  const fetchPublisherData = async () => {
+  const fetchActiveDiscounts = async () => {
     try {
-      const books = await bookService.getAllBooks();
-      const publisherStats = books.reduce((acc, book) => {
-        const publisher = book.publisher.name;
-        const existing = acc.find(p => p.name === publisher);
+      const response = await fetch('https://localhost:7256/api/admin/discounts/active');
+      const data = await response.json();
+      return data.data.map(discount => ({
+        name: discount.bookName,
+        percentage: discount.percentage
+      }));
+    } catch (error) {
+      console.error('Error fetching active discounts:', error);
+      return [];
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('https://localhost:7256/api/Order');
+      const data = await response.json();
+      const statusData = data.data.reduce((acc, order) => {
+        const status = order.status || 'Pending';
+        const existing = acc.find(d => d.name === status);
         if (existing) {
-          existing.count++;
-          existing.sales += book.price;
+          existing.value++;
         } else {
           acc.push({
-            name: publisher,
-            count: 1,
-            sales: book.price
+            name: status,
+            value: 1
           });
         }
         return acc;
       }, []);
-      setPublisherData(publisherStats);
+      return statusData;
     } catch (error) {
-      console.error('Error fetching publisher data:', error);
+      console.error('Error fetching orders:', error);
+      return [];
     }
   };
 
-  const fetchDiscountData = async () => {
-    try {
-      const discounts = await discountService.getActiveDiscounts();
-      const discountStats = discounts.map(discount => ({
-        name: discount.name,
-        usage: discount.usageCount,
-        value: discount.value
-      }));
-      setDiscountData(discountStats);
-    } catch (error) {
-      console.error('Error fetching discount data:', error);
-    }
-  };
-
-  const fetchStockData = async () => {
-    try {
-      const books = await bookService.getAllBooks();
-      const stockStats = books.map(book => ({
-        title: book.title,
-        stock: book.stock,
-        sales: book.sales
-      }));
-      setStockData(stockStats);
-    } catch (error) {
-      console.error('Error fetching stock data:', error);
-    }
-  };
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="admin-charts-container">
-      {loading && (
-        <div className="loading-container" style={{ textAlign: 'center', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '10px' }}>
-          <p>Loading charts...</p>
-        </div>
-      )}
-      {error && (
-        <div className="error-container" style={{ textAlign: 'center', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '10px', color: 'red' }}>
-          <p>{error}</p>
-        </div>
-      )}
-      {!loading && !error && (
-        <>
-          <div className="chart-section">
-            <h3>Sales Overview</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={bookSalesData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="sales" name="Total Sales" stroke="#0088FE" />
-                <Line type="monotone" dataKey="orders" name="Total Orders" stroke="#FFBB28" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="chart-section">
-            <h3>Publisher Performance</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={publisherData}
-                  dataKey="sales"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={120}
-                  fill="#8884d8"
-                  label
-                >
-                  {publisherData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="chart-section">
-            <h3>Discount Usage</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={discountData}>
-                <BarGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="usage" name="Usage Count" fill="#8884d8" />
-                <Bar dataKey="value" name="Discount Value" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="chart-section">
-            <h3>Stock Status</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart>
-                <ScatterGrid />
-                <XAxis type="number" dataKey="stock" name="Stock" />
-                <YAxis type="number" dataKey="sales" name="Sales" />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter
-                  name="Books"
-                  data={stockData}
-                  fill="#8884d8"
-                />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </div>
-        </>
-      )}
+    <div className="charts-container">
+      <div className="chart-section">
+        <h3>Book Stock Distribution</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={bookStockData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="stock" fill="#0088FE" name="Stock" />
+            <Bar dataKey="price" fill="#00C49F" name="Price" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="chart-section">
+        <h3>Active Discounts</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={discountData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="percentage" fill="#FFBB28" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="chart-section">
+        <h3>Order Status</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={orderStatusData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={120}
+              fill="#0088FE"
+              label
+            >
+              {orderStatusData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };
