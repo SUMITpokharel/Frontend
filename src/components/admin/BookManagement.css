@@ -1,0 +1,107 @@
+.book-management-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+}
+
+.book-management-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #2563eb;
+  margin-bottom: 32px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.book-form {
+  background: #f8fafc;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
+  padding: 32px 24px;
+  margin-bottom: 40px;
+}
+
+.book-form h5 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #22223b;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.book-form .MuiTextField-root,
+.book-form .MuiFormControlLabel-root {
+  margin-bottom: 18px;
+}
+
+.book-form .MuiButton-root {
+  font-weight: 700;
+  font-size: 1.08rem;
+  border-radius: 8px;
+  padding: 10px 0;
+  min-width: 120px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.book-form .MuiButton-containedPrimary {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  color: #fff;
+}
+
+.book-form .MuiButton-containedPrimary:hover {
+  background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.book-form .MuiButton-outlined {
+  border: 1.5px solid #2563eb;
+  color: #2563eb;
+}
+
+.book-form .MuiButton-outlined:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.book-table-container {
+  background: #f8fafc;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
+  padding: 24px 0;
+  margin-bottom: 40px;
+}
+
+.book-table th {
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.08rem;
+}
+
+.book-table td {
+  font-size: 1.05rem;
+  color: #22223b;
+}
+
+.book-table tr:hover {
+  background: #e0e7ff;
+}
+
+.book-table .MuiButton-root {
+  margin-right: 8px;
+}
+
+@media (max-width: 900px) {
+  .book-management-container {
+    padding: 10px 2px;
+  }
+  .book-form {
+    padding: 18px 6px;
+  }
+  .book-table-container {
+    padding: 8px 0;
+  }
+}

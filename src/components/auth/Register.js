@@ -12,7 +12,6 @@ const Register = () => {
     password: "",
     confirmPassword: "",
     gender: "1",
-    role: "1",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +42,6 @@ const Register = () => {
         Password: formData.password,
         ConfirmPassword: formData.confirmPassword,
         Gender: parseInt(formData.gender),
-        Role: parseInt(formData.role),
       };
       await register(payload);
       navigate("/verify-email", { state: { email: formData.email } });
@@ -96,23 +94,6 @@ const Register = () => {
                   <option value="1">Male</option>
                   <option value="2">Female</option>
                   <option value="3">Other</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="role">
-                  Role <span className="disabled-label">(User only)</span>
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  required
-                  disabled
-                  className="disabled-select"
-                >
-                  <option value="1">User</option>
-                  <option value="2">Admin</option>
                 </select>
               </div>
             </div>

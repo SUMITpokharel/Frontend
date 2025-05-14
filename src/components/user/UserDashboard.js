@@ -336,11 +336,27 @@ const UserDashboard = () => {
                           className="add-cart-btn"
                           onClick={async (e) => {
                             e.preventDefault();
-                            await cartService.addToCart(
-                              book.BookId || book.bookId,
-                              1
-                            );
-                            // Optionally show a toast/alert or update cart state
+                            const bookId = book.bookId || book.BookId;
+                            if (!bookId) {
+                              alert("Book ID is missing. Cannot add to cart.");
+                              return;
+                            }
+                            try {
+                              console.log("Adding to cart:", bookId, 1);
+                              await cartService.addToCart(bookId, 1);
+                              alert("Book added to cart!");
+                            } catch (err) {
+                              console.error(
+                                "Add to cart error:",
+                                err,
+                                err.response?.data
+                              );
+                              alert(
+                                err.response?.data?.message ||
+                                  err.message ||
+                                  "Failed to add to cart. Please try again."
+                              );
+                            }
                           }}
                         >
                           Add to Cart

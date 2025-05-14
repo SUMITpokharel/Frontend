@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import bookService from "../../services/bookService";
+import "./BookManagement.css";
 import {
   Container,
   TextField,
@@ -180,9 +181,13 @@ const BookManagement = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 5 }}>
+    <Container
+      maxWidth="lg"
+      className="book-management-container"
+      sx={{ mt: 5 }}
+    >
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" className="book-management-title" gutterBottom>
           Book Management
         </Typography>
       </Box>
@@ -191,6 +196,7 @@ const BookManagement = () => {
       <Box
         component="form"
         onSubmit={handleSubmit}
+        className="book-form"
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -320,8 +326,8 @@ const BookManagement = () => {
       </Box>
 
       {/* Books Table */}
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer component={Paper} className="book-table-container">
+        <Table className="book-table">
           <TableHead>
             <TableRow>
               <TableCell>Title</TableCell>

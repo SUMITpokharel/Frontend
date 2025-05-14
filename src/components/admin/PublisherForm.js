@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import publisherService from "../../services/publisherService";
+import "./PublisherForm.css";
 
 const PublisherForm = ({ onPublisherAdded }) => {
   const [name, setName] = useState("");

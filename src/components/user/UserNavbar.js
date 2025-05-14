@@ -8,6 +8,7 @@ import {
   FaHeart,
   FaSignOutAlt,
   FaBookOpen,
+  FaStar,
 } from "react-icons/fa";
 import "./User.css";
 
@@ -38,6 +39,10 @@ export default function Navbar() {
           <Link to="/user/wishlist" className="navbar-action-btn">
             <FaHeart />
             <span>Wishlist</span>
+          </Link>
+          <Link to="/user/reviews" className="navbar-action-btn">
+            <FaStar />
+            <span>Reviews</span>
           </Link>
           <button
             className="navbar-logout-btn"

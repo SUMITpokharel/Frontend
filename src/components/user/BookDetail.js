@@ -5,6 +5,9 @@ import discountService from "../../services/discountService";
 import { Star } from "lucide-react"; // Or use your own star icon
 import "./BookDetail.css"; // Create this for custom styles
 import { useBookmarks } from "../../context/BookmarkContext";
+import BookReviewList from "./BookReviewList";
+import BookReviewForm from "./BookReviewForm";
+import reviewService from "../../services/reviewService";
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -12,6 +15,18 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const { addBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const [discount, setDiscount] = useState(null);
+  const [reviews, setReviews] = useState([]);
+
+  const fetchReviews = React.useCallback(() => {
+    reviewService.getAll().then((data) => {
+      const reviewList = Array.isArray(data) ? data : data.data || [];
+      setReviews(reviewList.filter((r) => r.bookId === id));
+    });
+  }, [id]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   useEffect(() => {
     setLoading(true);
@@ -75,17 +90,7 @@ const BookDetail = () => {
         <div className="book-detail-info">
           <h1>{book.title}</h1>
           <h2>Title: {book.BookName || book.bookName}</h2>
-          <div className="book-detail-rating">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Star
-                key={i}
-                className={
-                  i <= Math.round(book.rating) ? "star-filled" : "star-empty"
-                }
-              />
-            ))}
-            <span>({book.reviewCount} reviews)</span>
-          </div>
+          <BookReviewList reviews={reviews} />
           <div className="book-detail-price">
             {isDiscounted ? (
               <>
@@ -152,6 +157,7 @@ const BookDetail = () => {
           </div>
         </div>
       </div>
+      <BookReviewForm bookId={bookId} onReviewSubmitted={fetchReviews} />
     </div>
   );
 };

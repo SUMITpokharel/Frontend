@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import cartService from "../../services/cartService";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import "./Cart.css";
 
 const Cart = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [discountedTotal, setDiscountedTotal] = useState(null);
 
   useEffect(() => {
     cartService
@@ -36,8 +38,9 @@ const Cart = () => {
       </div>
     );
 
-  const cartTotal = cart.cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  const cartItems = Array.isArray(cart.cartItems) ? cart.cartItems : [];
+  const cartTotal = cartItems.reduce(
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
     0
   );
 
@@ -54,13 +57,30 @@ const Cart = () => {
                   <button
                     className="remove-btn"
                     onClick={async () => {
-                      await cartService.removeCartItem(item.cartItemId);
-                      setCart({
-                        ...cart,
-                        cartItems: cart.cartItems.filter(
-                          (ci) => ci.cartItemId !== item.cartItemId
-                        ),
-                      });
+                      try {
+                        await cartService.removeCartItem(item.cartItemId);
+                        setCart({
+                          ...cart,
+                          cartItems: cart.cartItems.filter(
+                            (ci) => ci.cartItemId !== item.cartItemId
+                          ),
+                        });
+                      } catch (err) {
+                        if (err.response && err.response.status === 404) {
+                          alert(
+                            "Cart item not found. It may have already been removed."
+                          );
+                          // Optionally, remove it from UI anyway:
+                          setCart({
+                            ...cart,
+                            cartItems: cart.cartItems.filter(
+                              (ci) => ci.cartItemId !== item.cartItemId
+                            ),
+                          });
+                        } else {
+                          alert("Failed to remove cart item.");
+                        }
+                      }
                     }}
                   >
                     🗑️
@@ -80,6 +100,53 @@ const Cart = () => {
           </div>
         </div>
       </div>
+
+      <button
+        onClick={async () => {
+          // Calculate total quantity in cart
+          const totalQuantity = cart.cartItems.reduce(
+            (sum, item) => sum + (item.quantity || 0),
+            0
+          );
+          if (totalQuantity < 5) {
+            alert(
+              "You need at least 5 books in your cart to apply the discount."
+            );
+            return;
+          }
+          try {
+            const discounted = await cartService.applyDiscount(cart.cartItems);
+            setDiscountedTotal(discounted); // discounted is the new total price (decimal)
+            alert("Discount applied!");
+          } catch (err) {
+            alert(
+              err.response?.data?.message ||
+                err.message ||
+                "Failed to apply discount."
+            );
+          }
+        }}
+      >
+        Apply Discount
+      </button>
+
+      <button
+        onClick={async () => {
+          try {
+            await cartService.placeOrder(cart.cartItems);
+            alert("Order placed successfully!");
+            navigate("/user/orders");
+          } catch (err) {
+            alert(
+              err.response?.data?.message ||
+                err.message ||
+                "Failed to place order."
+            );
+          }
+        }}
+      >
+        Place Order
+      </button>
     </CartContainer>
   );
 };

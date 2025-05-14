@@ -26,6 +26,9 @@ import OrderConfirmation from "./components/user/OrderConfirmation";
 import AdminDashboards from "./components/admin/Announcement";
 import PublisherForm from "./components/admin/PublisherForm";
 import DiscountManagement from "./components/admin/DiscountManagement";
+import OrderHistory from "./components/user/OrderHistory";
+import AssignStaff from "./components/admin/AssignStaff";
+import BookReview from "./components/user/BookReview";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -62,14 +65,12 @@ function App() {
         <BookmarkProvider>
           <Routes>
             <Route path="/" element={<HomePage />} />
-
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
-
             {/* Admin Routes */}
             <Route
               path="/admin/dashboard"
@@ -111,7 +112,14 @@ function App() {
                 </AdminRoute>
               }
             />
-
+            <Route
+              path="/admin/assign-staff"
+              element={
+                <AdminRoute>
+                  <AssignStaff />
+                </AdminRoute>
+              }
+            />
             {/* User Routes */}
             <Route
               path="/user/dashboard"
@@ -122,7 +130,14 @@ function App() {
               }
             />
             <Route path="/user/book/:id" element={<BookDetail />} />
-
+            <Route
+              path="/user/reviews"
+              element={
+                <UserRoute>
+                  <BookReview />
+                </UserRoute>
+              }
+            />
             <Route
               path="/user/cart"
               element={
@@ -147,7 +162,8 @@ function App() {
                 </UserRoute>
               }
             />
-
+            // ...
+            <Route path="/user/orders" element={<OrderHistory />} />
             {/* Staff Route */}
             <Route
               path="/staff/dashboard"
@@ -157,7 +173,6 @@ function App() {
                 </StaffRoute>
               }
             />
-
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BookmarkProvider>
